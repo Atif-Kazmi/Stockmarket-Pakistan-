@@ -31,12 +31,9 @@ def fetch_psx_data():
         # Parse the response using BeautifulSoup
         soup = BeautifulSoup(response.content, 'html.parser')
 
-        # Debug: Print the raw HTML content to understand the structure
-        st.text(soup.prettify())  # This will show the structure of the HTML
-
-        # Scrape stock data from the table using specific tags or classes
+        # Find the relevant table using the class name (based on current PSX page structure)
         stock_data = []
-        table = soup.find('table', {'class': 'table table-condensed'})  # Adjusted for table class
+        table = soup.find('table', {'class': 'table table-condensed'})  # Adjust for table class
 
         if table:
             rows = table.find_all('tr')
@@ -71,8 +68,22 @@ data = fetch_psx_data()
 
 # Display the stock data in table format if it is available
 if data:
-    # Convert data to DataFrame
+    # Convert the list of dictionaries into a Pandas DataFrame
     df = pd.DataFrame(data)
     
-    # Display the data using Streamlit's data display options
-    st.dataframe(df)  # You can use st.table() i
+    # Display the data in the same format as the PSX market summary
+    st.dataframe(df, height=400)  # You can use st.table() for a static table if needed
+else:
+    st.write("No stock data available at the moment.")
+
+# Optional: Add CSS styling for a better table appearance
+st.markdown("""
+    <style>
+        .dataframe tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+        .dataframe th {
+            color: #007BFF;
+        }
+    </style>
+    """, unsafe_allow_html=True)
