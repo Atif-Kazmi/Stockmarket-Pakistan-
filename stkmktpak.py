@@ -1,4 +1,3 @@
-# Import required libraries
 import streamlit as st
 import requests
 from bs4 import BeautifulSoup
@@ -34,21 +33,25 @@ def fetch_psx_data():
         # Debug: Print the raw HTML content to understand the structure
         st.text(soup.prettify())  # This will show the structure of the HTML
 
-        # Scrape stock data from the table (Update this selector after inspecting the website)
+        # Scrape stock data from the table using specific tags or classes
         stock_data = []
-        for row in soup.find_all('tr'):  # Loop through all rows for debugging
-            columns = row.find_all('td')
-            if len(columns) > 0:
-                stock = {
-                    'symbol': columns[0].text.strip(),
-                    'company': columns[1].text.strip(),
-                    'price': columns[2].text.strip(),
-                    'change': columns[3].text.strip(),
-                    'volume': columns[4].text.strip()
-                }
-                stock_data.append(stock)
+        table = soup.find('table', {'class': 'table table-condensed'})  # Adjusted for table class
 
-        # Warn the user if no data was found
+        if table:
+            rows = table.find_all('tr')
+            for row in rows[1:]:  # Skipping header row
+                columns = row.find_all('td')
+                if len(columns) > 0:
+                    stock = {
+                        'symbol': columns[0].text.strip(),
+                        'company': columns[1].text.strip(),
+                        'price': columns[2].text.strip(),
+                        'change': columns[3].text.strip(),
+                        'volume': columns[4].text.strip()
+                    }
+                    stock_data.append(stock)
+
+        # Check if data was scraped
         if not stock_data:
             st.warning("No stock data was found.")
         
