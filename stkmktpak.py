@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
+import pandas as pd
 
 # Function to fetch data from Pakistan Stock Exchange
 def fetch_psx_data():
@@ -43,11 +44,11 @@ def fetch_psx_data():
                 columns = row.find_all('td')
                 if len(columns) > 0:
                     stock = {
-                        'symbol': columns[0].text.strip(),
-                        'company': columns[1].text.strip(),
-                        'price': columns[2].text.strip(),
-                        'change': columns[3].text.strip(),
-                        'volume': columns[4].text.strip()
+                        'Symbol': columns[0].text.strip(),
+                        'Company': columns[1].text.strip(),
+                        'Price': columns[2].text.strip(),
+                        'Change': columns[3].text.strip(),
+                        'Volume': columns[4].text.strip()
                     }
                     stock_data.append(stock)
 
@@ -68,8 +69,10 @@ st.title("Pakistan Stock Exchange Live Stock Market App")
 # Fetch the stock data from the PSX website
 data = fetch_psx_data()
 
-# Display the stock data if it is available
+# Display the stock data in table format if it is available
 if data:
-    st.write(data)
-else:
-    st.write("No stock data available at the moment.")
+    # Convert data to DataFrame
+    df = pd.DataFrame(data)
+    
+    # Display the data using Streamlit's data display options
+    st.dataframe(df)  # You can use st.table() i
