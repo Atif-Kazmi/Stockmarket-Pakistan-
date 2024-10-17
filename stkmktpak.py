@@ -31,17 +31,20 @@ def fetch_psx_data():
         # Parse the response using BeautifulSoup
         soup = BeautifulSoup(response.content, 'html.parser')
 
-        # Scrape stock data from the table (Update this selector to match actual site structure)
+        # Debug: Print the raw HTML content to understand the structure
+        st.text(soup.prettify())  # This will show the structure of the HTML
+
+        # Scrape stock data from the table (Update this selector after inspecting the website)
         stock_data = []
-        for row in soup.select('table.stock-table-class tr'):  # Replace with actual table selector
+        for row in soup.find_all('tr'):  # Loop through all rows for debugging
             columns = row.find_all('td')
             if len(columns) > 0:
                 stock = {
                     'symbol': columns[0].text.strip(),
                     'company': columns[1].text.strip(),
-                    'price': float(columns[2].text.strip().replace(',', '')),
-                    'change': float(columns[3].text.strip().replace(',', '')),
-                    'volume': int(columns[4].text.strip().replace(',', ''))
+                    'price': columns[2].text.strip(),
+                    'change': columns[3].text.strip(),
+                    'volume': columns[4].text.strip()
                 }
                 stock_data.append(stock)
 
